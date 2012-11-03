@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require "yaml"w
+require "yaml"
 require "ostruct"
 require "graph"
 
@@ -104,7 +104,8 @@ class Node < OpenStruct
   end
 
   def describe
-    base = if !described? && respond_to?(:desc)
+    base = ""
+    base += if !described? && respond_to?(:desc)
       self.described = true
       desc
     elsif respond_to?(:short_desc)
@@ -116,8 +117,8 @@ class Node < OpenStruct
 
     # Append presence of children nodes if open
     if open
-      children.each do|c|
-        base << (c.presence || '')
+      children.each do |c|
+        base << (c.presence || '') #This is bugged
       end
     end
 
@@ -238,7 +239,7 @@ class Node < OpenStruct
       nodes.each do |i|
         puts " * #{i.name} (#{i.words.join(', ')})"
       end
-      
+
       return nil
     end
   end
@@ -379,7 +380,7 @@ class Player < Node
   def open_close(thing, state)
     container = get_room.find(thing)
     return if container.nil?
-    
+
     if container.open == state
       puts "It's already #{state ? 'open' : 'closed'}"
     else
@@ -396,7 +397,7 @@ class Player < Node
   end
 
   def do_look(*a)
-    get_room.tap do|r|
+    get_room.tap do |r|
       r.described = false
       r.describe
     end
@@ -481,8 +482,8 @@ end
 class String
   def word_wrap(width=80)
     # Replace newlines with spaces
-    gsub(/\n/, ' ').   
-    
+    gsub(/\n/, ' ').
+
     # Replace more than one space with a single space
     gsub(/\s+/, ' ').
 
