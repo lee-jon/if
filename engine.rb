@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require "yaml"
+require "yaml"w
 require "ostruct"
 require "graph"
 
