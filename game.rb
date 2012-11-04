@@ -1,27 +1,29 @@
 #!/usr/bin/env ruby
+require 'yaml'
 
 # Fix loadpath and load files
 $: << '.'
 require 'engine'
+require 'player'
+require 'grapher'
 
 
 # Load the world - this should be done with ARGV
-root = Node.root do
+game = Node.root do
   room(:living_room) do
     self.exit_north = :kitchen
     self.exit_east = :hall
-
     self.desc = <<-DESC
       You are in a dark living room.  Heavy drapes cover
       the windows, the only light comes from a dim lamp in
       the corner.  The only furniture in the room is a
       well-used couch, covered in blankets and pillows.
+      
+      Exits are north to the kitchen and east to the hall.
     DESC
-
     self.short_desc = <<-DESC
       You are in a dark, messy living room.
     DESC
-
     item(:cat, 'cat', 'sleeping', 'fuzzy') do
       self.script_take = <<-SCRIPT
         if find(:dead_mouse)
@@ -52,10 +54,19 @@ root = Node.root do
         A cat dozes lazily here.
       PRES
 
-      item(:dead_mouse, 'mouse', 'dead', 'eaten')
+      item(:dead_mouse, 'mouse', 'dead', 'eaten') do
+        self.presence = <<-PRES
+          A dead mouse
+        PRES
+      end
     end
 
     item(:remote_control, 'remote', 'control') do
+      self.openable = true
+      self.presence = <<-PRES
+        There's a remote control.
+      PRES
+
       self.script_accept = <<-SCRIPT
         if [:new_batteries, :dead_batteries].include?(args[0].tag) &&
             children.empty?
@@ -90,21 +101,70 @@ root = Node.root do
 
   room(:kitchen) do
     self.exit_south = :living_room
+    
+    self.desc = <<-DESC
+      You are in a run down 1960s kitchen. You think you saw
+      cockroaches scatter, but your mind is still fuzzy.
+      The only exit is to the south.
+    DESC
+    
+    self.short_desc = <<-DESC
+      You are in a run down kitchen.
+    DESC
 
     player do
-      item(:ham_sandwich, 'sandwich', 'ham')
+      item(:ham_sandwich, 'sandwich', 'ham') do
+        self.desc = <<-DESC
+          A ham sandwich on rye bread. You remember you like ham sandwiches.
+          Especially with cheese. And pickle or mustard. You start to
+          salivate at the thought of eating the ham sandwich. But something
+          tells you it isn't meant for you.
+        DESC
+
+        self.short_desc = <<-DESC
+          A ham-sandwich.
+        DESC
+        
+        self.presence = <<-PRES
+          Someone has dropped a ham-sandwich on the floor.
+        PRES
+      end
     end
     
     item(:drawer, 'drawer', 'kitchen') do
       self.open = false
-
-      item(:new_batteries, 'batteries', 'new', 'AA')
+      self.openable = true
+      self.desc = <<-DESC
+        You see a drawer fronted in birch laminate.
+      DESC
+      self.short_desc = <<-DESC
+        A drawer fronted in birch laminate.
+      DESC
+      self.presence = <<-PRES
+        A kitchen unit is in the corner with a single drawer.
+      PRES
+      item(:new_batteries, 'batteries', 'new', 'AA') do
+        self.desc = <<-DESC
+          You look at the gleaming AA batteries. They look new, unused and
+          full of charge.
+        DESC
+        self.presence = <<-PRES
+          New AA Batteries.
+        PRES
+      end
     end
   end
 
   room(:hall) do
     self.exit_west = :living_room
-
+    self.desc = <<-DESC
+      You are in a massive hallway. Its a lot larger than the other rooms.
+      Why would someone design a house like that. Then again, why would 
+      someone design a game like this. 
+    DESC
+    self.short_desc = <<-DESC
+      You are in a massive hallway.
+    DESC
     self.script_enter = <<-SCRIPT
       puts "A forcefield stops you from entering the hall"
       return false
@@ -115,15 +175,22 @@ end
 
 # initialize game
 saved = false
+introduction = <<-INTRO
+  \n
+  Welcome to the test game. Please be careful as you move around!
+  INTRO
+puts introduction + "\n"
+turn = 0
 
 
 # Main loop
 loop do
-  puts ""
-  
-  player = root.find(:player)
-  player.get_room.describe
-  
+  turn += 1
+
+  player = game.find(:player)
+  player.get_room.describe if player.get_room.described? == false
+
+  puts ""  
   print "> "
   input = gets.chomp
   verb = input.split(' ').first
@@ -131,26 +198,23 @@ loop do
   
   case verb
   when "load"
-    root = Node.load
+    game = Node.load
     puts "Loaded"
   when "save"
-    Node.save(root)
+    Node.save(game)
     puts "Saved"
     saved = true
   when "quit"
-    if saved == true
-      puts "Goodbye!"
-      exit
-    else
+    if saved == false
       puts "Game not saved. Are you sure? (Y/N)?"
       input = gets.chomp
       if input.downcase == "y"
-        Node.save(root)
-        exit
-      else
+        puts "Goodbye!"
         exit
       end
     end
+  when "qq"
+    exit
   else
     saved = false
     player.command(input)
