@@ -19,3 +19,6 @@ doc/
 
 # test Data files
 world.rb
+
+# VIM
+*.swp
