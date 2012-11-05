@@ -1,7 +1,11 @@
 #!/usr/bin/env ruby
 #
+# Node visualiser for IF engine. 
+#
 # Grapher requires svg2png installed on OSX 
 # brew install svg2png if you have homebrew installed
+
+require 'graph'
 
 class Node < OpenStruct
   def graph(gr=Graph.new)

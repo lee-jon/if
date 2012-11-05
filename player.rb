@@ -23,7 +23,7 @@ class Player < Node
       if dest.script('enter', direction)
         get_root.move(self, dest)
       end
-      
+
       get_room.describe
     end
   end
@@ -55,7 +55,7 @@ class Player < Node
   def open_close(thing, state)
     container = get_room.find(thing)
     return if container.nil?
-    
+
     if container.openable == true
       if container.open == state
         puts "It's already #{state ? 'open' : 'closed'}"
