@@ -6,16 +6,14 @@ require "ostruct"
 # A node which describes the data tree behaviour, and all methods
 # to be called on a data node. Node inherits from (OpenStruct)[http://www.ruby-doc.org/stdlib-1.9.3/libdoc/ostruct/rdoc/OpenStruct.html]
 # which is part of Ruby standard library. OpenStruct is like a Struct
-# where you can also arbitrarily define attributes at runtime.
-# There are limitations to using OpenStruct, in that they use significantly
-# more memory and are very slow in comparison to Hash's or Structs.
-# 
+# where you can also arbitrarily define attributes at runtime.ß
+#
 # Although any type of node is valid, the default types of root, room,
 # item and player have their own constructors. These have their own
 # key/value pairs.
-# 
-# Example: Create the root node and then any number of child nodes. To 
-# recreate the first room of Zork (http://en.wikipedia.org/wiki/Zork) 
+#
+# Example: Create the root node and then any number of child nodes. To
+# recreate the first room of Zork (http://en.wikipedia.org/wiki/Zork)
 # we could use the following code:
 #
 #   game = Node.root do
@@ -38,7 +36,7 @@ class Node < OpenStruct
       new_ostruct_member(k)
     end
   end
-  
+
   def self.save(node, file='save.yaml')
     File.open(file, 'w+') do |f|
       f.puts node.to_yaml
@@ -65,13 +63,13 @@ class Node < OpenStruct
   }
 
   # Public: Initialize a node
-  # 
+  #
   # parent   - reference to the new node's parent node. This defaults to
   # nil if not given. nil should only be used for the root node.
   #            not given.
   # tag      - unique ID (as a symbol) given to the node
   # defaults - block containing default key/values of the node.
-  # &block   - this enables us to define its children. instance_eval is 
+  # &block   - this enables us to define its children. instance_eval is
   # used instead of yield self, eliminating the need to think
   # of unique block parameter names. A node can accessed using
   # `self`.
@@ -99,9 +97,9 @@ class Node < OpenStruct
     i.words = words
     i.instance_eval(&block) if block_given?
   end
-  
+
   # Public: *Player* constructor.
-  # 
+  #
   # Requires: Player < Node to be defined.
   def player(&block)
     Player.new(self, :player, DEFAULTS[:player], &block)
@@ -121,7 +119,7 @@ class Node < OpenStruct
       return parent.get_room
     end
   end
-  
+
   # Public: Helper to return the root node
   def get_root
     if tag == :root || parent.nil?
@@ -130,8 +128,8 @@ class Node < OpenStruct
       return parent.get_root
     end
   end
-  
-  # Public: Returns 
+
+  # Public: Returns
   def ancestors(list=[])
     if parent.nil?
       return list
@@ -168,9 +166,9 @@ class Node < OpenStruct
       "#{tag}"
     end
 
-    if open
+    if open && !children.empty?
       if parent.tag != :root
-        # If its not a room add this text
+        # If its not a room add this text, when it has child nodes
         base << "Inside it you see "
       end
       children.each do |c|
@@ -182,7 +180,7 @@ class Node < OpenStruct
   end
 
   # Public: Evaluates whether a node has a key for it's short description.
-  # 
+  #
   # Returns: self.short_desc if defined. Otherwise returns the node's tag
   # as a String.
   def short_description
@@ -193,7 +191,7 @@ class Node < OpenStruct
     end
   end
 
-  
+  # Public: returns true if the node is hidden (a child in a closed node).
   def hidden?
     if parent.tag == :root
       return false
