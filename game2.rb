@@ -75,6 +75,17 @@ game = Node.root do
   end
   room (:meeting_room) do
     self.exit_south = :upstairs_office
+    self.desc = <<-DESC
+      You are in a typical meeting room. There is a table in front of you
+      that looks like its made of a glass panel on top of an aircraft
+      wing. The wall on one side of the room is covered in whiteboard paint.
+      There is a television at another end. The room smells of work and men.
+      DESC
+    self.short_desc = "Meeting room"
+    self.item(:whiteboard, 'whiteboard', 'wall') do
+    end
+    self.item(:wing_table, 'table', 'wing') do
+    end
   end
   room (:recruiters_office) do
     self.exit_east  = :upstairs_office
@@ -84,7 +95,7 @@ game = Node.root do
       recruiters are here but seem engrossed in what they're doing.
       DESC
     self.short_desc = <<-DESC
-      The recruitment office.
+      Recruitment office.
       DESC
 
     item(:timesheet, 'timesheet', 'blank') do
