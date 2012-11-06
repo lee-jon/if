@@ -2,10 +2,13 @@ require "yaml"
 require "ostruct"
 
 # Public: The node class.
+#
 # A node which describes the data tree behaviour, and all methods
 # to be called on a data node. Node inherits from (OpenStruct)[http://www.ruby-doc.org/stdlib-1.9.3/libdoc/ostruct/rdoc/OpenStruct.html]
-# which is part of Ruby standard library. OpenStruct is like a Struct, 
-# but 
+# which is part of Ruby standard library. OpenStruct is like a Struct
+# where you can also arbitrarily define attributes at runtime.
+# There are limitations to using OpenStruct, in that they use significantly
+# more memory and are very slow in comparison to Hash's or Structs.
 # 
 # Although any type of node is valid, the default types of root, room,
 # item and player have their own constructors. These have their own
@@ -110,6 +113,7 @@ class Node < OpenStruct
   end
 
 
+  # Public: Returns the room node of node.
   def get_room
     if parent.tag == :root
       return self
@@ -117,7 +121,8 @@ class Node < OpenStruct
       return parent.get_room
     end
   end
-
+  
+  # Public: Helper to return the root node
   def get_root
     if tag == :root || parent.nil?
       return self
@@ -125,7 +130,8 @@ class Node < OpenStruct
       return parent.get_root
     end
   end
-
+  
+  # Public: Returns 
   def ancestors(list=[])
     if parent.nil?
       return list
@@ -162,13 +168,11 @@ class Node < OpenStruct
       "#{tag}"
     end
 
-    # Internal: Append presence of children nodes if open
     if open
       if parent.tag != :root
         # If its not a room add this text
         base << "Inside it you see "
       end
-        
       children.each do |c|
         base << (c.presence || '')
       end
@@ -189,7 +193,7 @@ class Node < OpenStruct
     end
   end
 
-
+  
   def hidden?
     if parent.tag == :root
       return false
@@ -311,6 +315,7 @@ class Node < OpenStruct
     return nodes
   end
 
+  # Public: Overrides OpenStruct to_s method to visualise the node.
   def to_s(verbose=false, indent='')
     bullet = if parent && parent.tag == :root
                '#'
@@ -345,6 +350,8 @@ class Node < OpenStruct
   end
 end
 
+
+# Public: adds word_wrap method to String for better screen formatting.
 class String
   def word_wrap(width=80)
     # Replace newlines with spaces
