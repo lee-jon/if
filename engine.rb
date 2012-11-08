@@ -38,7 +38,7 @@ class Node < OpenStruct
   end
 
   def self.save(node, file='save.yaml')
-    File.open(file, 'w+') do |f|
+  File.open(file, 'w+') do |f|
       f.puts node.to_yaml
     end
   end
@@ -347,7 +347,6 @@ class Node < OpenStruct
     return str
   end
 end
-
 
 # Public: adds word_wrap method to String for better screen formatting.
 class String

@@ -28,6 +28,8 @@ The engine uses OpenStruct to create a tree of data. Each node has a parent node
 ## Contributing
 At present the engine is very alpha. Engine and player are the only files required to execute a game.
 
+Methods should be documented with TomDoc wherever possible. Ruby standards should be common formatting guides. See GitHub's for a good example.
+
 ### Bugs & Issues
 This is an adaption from Michael Morin's Node game engine published Nov 2011. The following issues exist with that implementation.
 * At the minute everything can be opened or closed, which leads to some weird side effects. FIXED

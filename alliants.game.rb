@@ -1,4 +1,27 @@
 Node.root do
+  self.intro = <<-INTRO
+
+    Welcome to the Alliants test game. This is based around our offices.
+    All likenesses to any real people is completely on purpose and you
+    probably should get offended.
+
+    Type help for a list of commands.
+    INTRO
+  self.help = <<-HELP
+Here are a list of active commands:
+    Movement      = north, south, east, west, up, down
+                    See the room description for allowed directions.
+    get  <obj>    = pick up the object and put in inventory, Also: take
+    drop <obj>    = put down object in room
+    inventory     = list items held by player
+                    Also: inv, i
+    look          = describe the room again in long form.
+    examine <obj> = look at object
+    ex            = ALIAS for examine
+    open <obj>    = open container or object
+    close <obj>   = close container or object
+    HELP
+
   room(:downstairs_office) do
     self.exit_north = :universal_marina
     self.exit_up    = :upstairs_office
@@ -24,7 +47,7 @@ Node.root do
     player do
       item(:business_card, 'card', 'business', '200gsm') do
         self.desc = <<-DESC
-        
+
           Its the size of a standard business card, with the Alliants logo
           on the front.
           It reads:

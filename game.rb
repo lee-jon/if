@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'yaml'
 
-# Fix loadpath and load files
+# Fix loadpath and load
 $: << '.'
 require 'engine'
 require 'player'
@@ -10,6 +10,8 @@ require 'grapher'
 # Load the required game
 file = File.read("alliants.game.rb")
 game = eval(file)
+
+puts game.intro.to_s + "\n\n\n"
 
 # Main loop
 loop do
@@ -26,6 +28,8 @@ loop do
   when "save"
     Node.save(game)
     puts "Saved"
+  when "help"
+    puts game.help
   when "quit"
     puts "Goodbye!"
     exit

@@ -20,5 +20,6 @@ doc/
 # test Data files
 world.rb
 
-# VIM
+# VIM / IDE
 *.swp
+tags
