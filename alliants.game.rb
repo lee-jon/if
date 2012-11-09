@@ -73,6 +73,13 @@ Here are a list of active commands:
           Someone has dropped a bacon sandwich on the floor. Urgh.
           PRES
       end
+      item(:pen, 'pen', 'black', 'ballpoint') do
+        self.desc = <<-DESC
+          you look at the black enamel pen and wonder how it could be mightier than the sword.
+          DESC
+        self.short_desc = "A pen"
+        self.presence = "A black enamel ballpoint pen"
+      end
     end
   end
   room(:upstairs_office) do
@@ -111,7 +118,6 @@ Here are a list of active commands:
     self.short_desc = "Recruitment office."
 
     item(:timesheet, 'timesheet', 'blank') do
-      self.open = true
       self.desc = <<-DESC
         The time sheet has an Alliants logo on the top and boxes blank to
         enter your hours in it. Someone should automate this process. It
@@ -124,9 +130,19 @@ Here are a list of active commands:
       self.presence  = <<-PRES
         A paper timesheet is lying here.
         PRES
-      self.script_sign = <<-SCRIPT
-        if !parent.find(:pen)
-          puts "with what exactly?"
+      self.script_use = <<-SCRIPT
+        if args[0].nil?
+          puts "You try and sign the timesheet with blood," +
+                "but you lose heart. Maybe there's something else to use?"
+          return
+        elsif args[0].tag != :pen
+          puts "You can't use that to sign a timesheet"
+          return
+        else
+          puts "You fill out the timesheet in floral calligraphic letters " +
+                "and remember to sign your name at the bottom"
+          get_root.move(:signed_timesheet, parent, false)
+          get_root.move(:timesheet, :void, false)
           return
         end
         SCRIPT
@@ -144,16 +160,21 @@ Here are a list of active commands:
       You are stood within Universal Marina.
       DESC
     self.script_enter = <<-SCRIPT
+      if get_root.find(:timesheet).parent.tag != :void
         puts "Donna screams at you, no leaving the office until you've
-              completed your timesheets."
+              completed your timesheets!"
+        puts
         return false
+      else
+        return true
+      end
       SCRIPT
   end
   room(:boat_universal) do
     self.exit_east  = :universal_marina
     self.exit_south = :warsash_dock
     self.desc = <<-DESC
-      You are sat in a Jenneau Cap Camerant boat. It has twin engines. Safe
+      You are sat in a Jenneau Cap Camarant boat. It has twin engines. Safe
       you think. The seats smell of rich leather. But the interior could do
       with a woman's touch.
       The river runs to the south, and the marina is back to the east.
@@ -166,10 +187,10 @@ Here are a list of active commands:
     self.exit_north = :boat_universal
     self.exit_east  = :rising_sun
     self.desc = <<-DESC
-      You are sat in a Jenneau Cap Camerant boat. It has twin engines. Safe
+      You are sat in a Jenneau Cap Camarant boat. It has twin engines. Safe
       you think. The seats smell of rich leather. But the interior could do
       with a woman's touch.
-      The river leads north up the Hamble, and the Rising Sun pub is to the
+      The river leads north, and the Rising Sun pub is to the
       east.
       DESC
     self.short_desc = <<-DESC
@@ -193,8 +214,7 @@ Here are a list of active commands:
     item(:signed_timesheet, 'timesheet', 'signed') do
       self.desc = <<-DESC
         The timesheet with the misaligned logo is now decorated with all the
-        hours you've worked in the last month. All you need to do now is
-        find Donna and give it to her.
+        hours you've worked in the last month, and your signature.
         DESC
       self.short_desc = <<-DESC
         A signed timesheet

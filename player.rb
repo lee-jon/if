@@ -133,18 +133,19 @@ class Player < Node
     prep_regex = Regexp.new("(#{prepositions.join('|')})")
     item1_words, _, item2_words = words.join(' ').split(prep_regex)
 
-    if item2_words.nil?
-      puts "I don't quite understand you"
-      return
-    end
+    # if item2_words.nil?
+    #   puts "I don't quite understand you"
+    #   return
+    # end
 
     item1 = get_room.find(item1_words)
     item2 = get_room.find(item2_words)
-    return if item1.nil? || item2.nil?
+    # return if item1.nil? || item2.nil?
+    return if item1.nil?
 
     item1.script('use', item2)
   end
-
+  alias_method :do_sign, :do_use
 
   def do_debug(*a)
     STDOUT.puts get_root

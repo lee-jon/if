@@ -33,6 +33,10 @@ loop do
   when "quit"
     puts "Goodbye!"
     exit
+  when "reload"
+    file = File.read("alliants.game.rb")
+    game = eval(file)
+    puts "reloaded"
   else
     player.command(input)
   end
