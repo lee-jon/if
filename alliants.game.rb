@@ -173,6 +173,7 @@ Here are a list of active commands:
   room(:boat_universal) do
     self.exit_east  = :universal_marina
     self.exit_south = :warsash_dock
+    self.exit_north = :jolly_sailor
     self.desc = <<-DESC
       You are sat in a Jenneau Cap Camarant boat. It has twin engines. Safe
       you think. The seats smell of rich leather. But the interior could do
@@ -182,6 +183,15 @@ Here are a list of active commands:
     self.short_desc = <<-DESC
       In a boat at Universal Marina.
       DESC
+  end
+  room(:jolly_sailor) do
+    # by Nick
+    self.exit_south = :boat_universal
+    self.desc = <<-DESC
+      It was once the famous pub setting for Howards Way. LJB is standing there drinking a beer singing that famous Jan Stevens athem ALWAYS THERE.  If you don't know what we are talking about you must have been born after 1983 and dont own a watch.  You look at your mobile and think god is that really the time I must have been drinking with the CEO.
+      Exits are South back to Universal Marina.
+    DESC
+    self.short_desc = "Outside the Jolly Sailor pub"
   end
   room(:warsash_dock) do
     self.exit_north = :boat_universal
