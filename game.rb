@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'yaml'
+require 'readline'
 
 # Fix loadpath and load
 $: << '.'
@@ -18,7 +19,9 @@ loop do
   player = game.find(:player)
   player.get_room.describe unless player.get_room.described?
   print "\n> "
-  input = gets.chomp
+
+  input = Readline.readline('> ', true)
+ # input = gets.chomp
   verb = input.split(' ').first
 
   case verb
