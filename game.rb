@@ -2,7 +2,7 @@
 require 'yaml'
 require 'readline'
 
-# Fix loadpath and load
+# Fix loadpath and load Requirements
 $: << '.'
 require 'engine'
 require 'player'
@@ -12,16 +12,25 @@ require 'grapher'
 file = File.read("alliants.game.rb")
 game = eval(file)
 
+# Initialize game
+LIST = [
+  'examine', 'look', 'inventory', 'get', 'put'
+].sort
+
+comp = proc { |s| LIST.grep( /^#{Regexp.escape(s)}/ ) }
+Readline.completion_append_character = " "
+Readline.completion_proc = comp
+
+
+# Play game
 puts game.intro.to_s + "\n\n\n"
 
 # Main loop
 loop do
   player = game.find(:player)
   player.get_room.describe unless player.get_room.described?
-  print "\n> "
 
   input = Readline.readline('> ', true)
- # input = gets.chomp
   verb = input.split(' ').first
 
   case verb
