@@ -19,7 +19,12 @@ doc/
 
 # test Data files
 world.rb
+*.game
+
+# Save files
+*.yaml
 
 # VIM / IDE
 *.swp
 tags
+
