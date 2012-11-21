@@ -11,11 +11,11 @@ class Player < Node
       puts "I don't know how to do that"
     end
   end
-  
+
   def self.game_methods
     available = self.instance_methods.grep /do/
     available.collect {|i| i.to_s.gsub('do_','')}
-  end   
+  end
 
   def do_go(direction, *a)
     dest = get_room.send("exit_#{direction}")
@@ -54,7 +54,7 @@ class Player < Node
   alias_method :do_get, :do_take
 
   def do_drop(*thing)
-    move(thing, get_room)
+    puts 'Dropped.' if move(thing, get_room)
   end
 
   def open_close(thing, state)
