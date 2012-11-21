@@ -11,6 +11,11 @@ class Player < Node
       puts "I don't know how to do that"
     end
   end
+  
+  def self.game_methods
+    available = self.instance_methods.grep /do/
+    available.collect {|i| i.to_s.gsub('do_','')}
+  end   
 
   def do_go(direction, *a)
     dest = get_room.send("exit_#{direction}")
@@ -149,13 +154,5 @@ class Player < Node
 
   def do_debug(*a)
     STDOUT.puts get_root
-  end
-
-  def play
-    loop do
-      do_look
-      print "What now? "
-      command(gets.chomp)
-    end
   end
 end

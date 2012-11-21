@@ -9,21 +9,17 @@ require 'player'
 require 'grapher'
 
 # Load the required game
-file = File.read("alliants.game.rb")
+file = File.read("zork.game.rb")
 game = eval(file)
 
 # Initialize game
-LIST = [
-  'examine', 'look', 'inventory', 'get', 'put'
-].sort
-
-comp = proc { |s| LIST.grep( /^#{Regexp.escape(s)}/ ) }
+AUTOCOMPLETE = Player.game_methods
+comp = proc { |s| AUTOCOMPLETE.grep( /^#{Regexp.escape(s)}/ ) }
 Readline.completion_append_character = " "
 Readline.completion_proc = comp
 
-
 # Play game
-puts game.intro.to_s + "\n\n\n"
+puts game.intro.to_s + "\n\n"
 
 # Main loop
 loop do
