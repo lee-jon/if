@@ -12,14 +12,14 @@ require 'grapher'
 puts "Welcome to IF, the interactive fiction / adventure game interpreter.\n\n"
 puts "Select a game to load."
 
-a = Dir.glob('games/*.game*')
-a.each_with_index do |file, index|
+file_index = Dir.glob('games/*.game*')
+file_index.each_with_index do |file, index|
   puts "#{index+1}. #{file.gsub('games/','').gsub('game.rb','')}"
 end
 file_number = gets.chomp.to_i - 1
 
 # Load game
-file = File.read(a[file_number])
+file = File.read(file_index[file_number])
 game = eval(file)
 
 # Initialize game
@@ -52,10 +52,6 @@ loop do
   when "quit"
     puts "Goodbye!"
     exit
-  when "reload"
-    file = File.read("alliants.game.rb")
-    game = eval(file)
-    puts "reloaded"
   else
     player.command(input)
   end

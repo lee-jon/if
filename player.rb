@@ -1,6 +1,14 @@
-# requires engine to describe Node behaviour
+# Player class
+
+# Player is an extension of the player node type, giving player specific 
+# methods which respond to the input verbs in the game.
+# This class should contain only canonical verbs. Game specific terms
+# can be included the game file which is evaluated at run time. 
 
 class Player < Node
+  
+  # Public: command separates the arguments into a verb and words
+  # Returns: sends associated arguments to verb methods
   def command(words)
     verb, *words = words.split(' ')
     verb = "do_#{verb}"
@@ -12,12 +20,17 @@ class Player < Node
     end
   end
 
+  # Public: Returns the available verb methods
   def self.game_methods
     available = self.instance_methods.grep /do/
     available.collect {|i| i.to_s.gsub('do_','')}
   end
 
-  def do_go(direction, *a)
+  # Public: moves the player in the direction
+  #
+  # Method checks the destination node to see whethere there is a script
+  # to execute first.
+  def do_go(direction=nil, *a)
     dest = get_room.send("exit_#{direction}")
 
     if dest.nil?
@@ -151,6 +164,29 @@ class Player < Node
     item1.script('use', item2)
   end
   alias_method :do_sign, :do_use
+  
+  def do_pull(word)
+    item = get_room.find(word)
+    return if item.nil?
+    
+    item.script('pull')
+  end
+  
+  def do_push(word)
+    item = get_room.find(word)
+    return if item.nil?
+    
+    item.script('push')
+  end
+  
+  def do_enter(word)
+    item = get_room.find(word)
+    return if item.nil?
+    
+    if item.script('enter')
+      puts "Its not possible to do that."
+    end
+  end
 
   def do_debug(*a)
     STDOUT.puts get_root

@@ -111,7 +111,12 @@ class Node < OpenStruct
   end
 
 
-  # Public: Returns the room node of node.
+  # Public: Traverses the tree until a room is found.
+  #
+  # This is useful because not all parents of items / player are rooms.
+  # For example an item can be within an item. 
+  # 
+  # Returns: the room node on the called object.
   def get_room
     if parent.tag == :root
       return self
@@ -120,7 +125,7 @@ class Node < OpenStruct
     end
   end
 
-  # Public: Helper to return the root node
+  # Public: Traverses the tree upwards until the root node is found
   def get_root
     if tag == :root || parent.nil?
       return self
@@ -129,7 +134,7 @@ class Node < OpenStruct
     end
   end
 
-  # Public: Returns
+  # Public:
   def ancestors(list=[])
     if parent.nil?
       return list
@@ -202,7 +207,11 @@ class Node < OpenStruct
     end
   end
 
-
+  # Public: This looks at the node to see whether there is a script
+  #
+  # Returns: 
+  # if true  - calls the script
+  # if false - returns true
   def script(key, *args)
     if respond_to?("script_#{key}")
       return eval(self.send("script_#{key}"))
@@ -211,7 +220,22 @@ class Node < OpenStruct
     end
   end
 
-
+  # Public: Moves the position of a Node in the tree from a parent to another
+  # parent.
+  #
+  # Inputs:
+  # thing - Node to be moved
+  # to    - target parent Node
+  # check - when false the method skips validating hidden items or whether a 
+  # node is open.
+  # 
+  # Method calls find to get the object and destination nodes. If the
+  # destination is hidden, or doesn't respond to 'self.open == true'
+  # then the method replies it can't do that. Otherwise the object's parent
+  # child-node reference is deleted, and this is added to the target's children
+  # node. The parent of the object is set as the destination note
+  #
+  # Returns: Modifies the Node tree
   def move(thing, to, check=true)
     item = find(thing)
     dest = find(to)
@@ -238,7 +262,10 @@ class Node < OpenStruct
     item.parent = dest
   end
 
-
+  # Public: Helper method which evaluates the object and issues the correct
+  # function to find the node described by 'thing'
+  #
+  # Returns Node found in by searching for thing or nil
   def find(thing)
     case thing
     when Symbol
