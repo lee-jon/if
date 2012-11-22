@@ -132,14 +132,27 @@ Node.root do
       SURE TO BE SICK"
     DESC
     self.script_exit = <<-SCRIPT
-      #TODO detect where tube_car is and then move to that location
+      if get_room.open
+        current_station = get_root.find(:tube_car).get_room
+        get_root.move(:player, current_station, false)
+        puts current_station.short_desc
+      else
+        puts "You are still fastened in."
+      end
     SCRIPT
   end
-  item(:tube_car, 'car') do
-    self.presence = "Travel-Tube car"
-    self.script_enter = <<-SCRIPT
-      get_root.move(:player, :carriage)
-      return false
-    SCRIPT
+  
+  room(:void) do
+    self.desc = "You are in the void - how did you get here"
+    item(:tube_car, 'car') do
+      self.presence = "Travel-Tube car"
+      self.script_enter = <<-SCRIPT
+        get_root.move(:player, :carriage)
+        return false
+      SCRIPT
+    end
+    item(:mover, 'mover', 'metallic') do
+      self.presence = "The mover is here."
+    end
   end
 end

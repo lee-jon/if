@@ -165,28 +165,39 @@ class Player < Node
   end
   alias_method :do_sign, :do_use
   
-  def do_pull(word)
-    item = get_room.find(word)
+  def do_pull(*words)
+    item = get_room.find(words)
     return if item.nil?
     
     item.script('pull')
   end
   
-  def do_push(word)
-    item = get_room.find(word)
+  def do_push(*words)
+    item = get_room.find(words)
     return if item.nil?
     
     item.script('push')
   end
   
-  def do_enter(word)
-    item = get_room.find(word)
+  def do_enter(*words)
+    item = get_room.find(words)
     return if item.nil?
     
     if item.script('enter')
       puts "Its not possible to do that."
     end
   end
+  
+  def do_exit(*word)
+    # Note unlike enter, exit uses get_root for the item, and the room for
+    # the script.
+    item = get_root.find(word)
+    return if item.nil?
+    
+    room = self.parent
+    parent.script('exit')
+  end
+    
 
   def do_debug(*a)
     STDOUT.puts get_root
