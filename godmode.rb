@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# Debug environment for IF
 require 'yaml'
 require 'readline'
 
@@ -8,4 +9,5 @@ require 'engine'
 require 'player'
 require 'grapher'
 
-# game = eval(File.read('./games/seabase_delta.game.rb'))
+game = eval(File.read('./games/seabase_delta.game.rb'))
+player = game.find(:player)

@@ -58,7 +58,13 @@ class Player < Node
 
   def do_take(*thing)
     thing = get_room.find(thing)
+    
     return if thing.nil?
+    
+    if thing.fixed == true
+      puts "This cannot be taken."
+      return
+    end
 
     if thing.script('take')
       puts 'Taken.' if get_root.move(thing, self)
@@ -104,8 +110,10 @@ class Player < Node
     item = get_room.find(thing)
     return if item.nil?
 
-    item.described = false
-    item.describe
+    if item.script('examine')
+      item.described = false
+      item.describe
+    end
   end
   alias_method :do_ex, :do_examine
 
@@ -161,9 +169,12 @@ class Player < Node
     # return if item1.nil? || item2.nil?
     return if item1.nil?
 
-    item1.script('use', item2)
+    if item1.script('use', item2)
+      puts "I don't know how to use that."
+    end
   end
   alias_method :do_sign, :do_use
+  alias_method :do_insert, :do_use
   
   def do_pull(*words)
     item = get_room.find(words)

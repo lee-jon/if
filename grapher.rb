@@ -15,7 +15,7 @@ class Node < OpenStruct
     if tag == :player || tag == :root
       gr.tomato << gr.node(tag.to_s)
     elsif parent && parent.tag == :root
-      gr.mediumspringgreen << gr.xnode(tag.to_s)
+      gr.mediumspringgreen << gr.node(tag.to_s)
     end
 
     children.each{|c| c.graph(gr) }

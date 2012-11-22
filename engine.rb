@@ -59,6 +59,7 @@ class Node < OpenStruct
     :root => { :open => true },
     :room => { :open => true },
     :item => { :open => false },
+    :scenery => { :open => false, :fixed => true },
     :player => { :open => true }
   }
 
@@ -93,6 +94,16 @@ class Node < OpenStruct
   # Public: *Item* constructor.
   def item(tag, name, *words, &block)
     i = Node.new(self, tag, DEFAULTS[:item])
+    i.name = name
+    i.words = words
+    i.instance_eval(&block) if block_given?
+  end
+  
+  # Public: *Scenery* constructor
+  #
+  # used for item behaviour without item properties
+  def scenery(tag, name, *words, &block)
+    i = Node.new(self, tag, DEFAULTS[:scenery])
     i.name = name
     i.words = words
     i.instance_eval(&block) if block_given?
@@ -168,13 +179,13 @@ class Node < OpenStruct
     elsif respond_to?(:short_desc)
       short_desc
     else
-      "#{tag}"
+      "I see nothing special."
     end
 
     if open && !children.empty?
       if parent.tag != :root
         # If its not a room add this text, when it has child nodes
-        base << "Inside it you see "
+        base << "Inside it you see:"
       end
       children.each do |c|
         base << (c.presence || '')

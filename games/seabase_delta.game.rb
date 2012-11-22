@@ -1,3 +1,18 @@
+# Non-canonical verbs
+class Player < Node
+  def do_fastern(*words)
+    item = get_room.find(words)
+    return if item.nil?
+    item.script('fastern')
+  end
+  def do_unfastern(*words)
+    item = get_room.find(words)
+    return if item.nil?
+    item.script('unfastern')
+  end
+end
+
+# Game
 Node.root do
   self.intro = "Seabase delta, classic 1984 game by Firebird software"
   self.help = "Use your 'ed Ed, & always EXAMINE things."
@@ -37,7 +52,6 @@ Node.root do
     
     item(:dead_body, 'body') do
       self.fixed = true
-      self.openable = false
       self.short_desc = "Dead body."
       self.presence   = "Dead body."
       self.desc = "No signs of life - perhaps his pockets..."
@@ -45,15 +59,10 @@ Node.root do
         puts "Thanks-but NO THANKS!"
         return false
       SCRIPT
-      
-      item(:plastic_card, 'plastic-card', 'plastic', 'card') do
-        self.desc = <<-DESC
-          TRAVEL PERMIT issues to and for use of secret agent -
-          SIGNED -"MAJOR I.RON.FOIL"
-        DESC
-        self.short_desc = "Plastic card"
-        self.presence = "Plastic card"
-      end
+      self.script_examine = <<-SCRIPT
+          get_root.move(:pockets, parent, false)
+          return true
+        SCRIPT
     end
     
     player
@@ -73,7 +82,7 @@ Node.root do
       self.short_desc = "A table."
       self.presence   = "Long table."
     end
-    item(:seaweed, 'seaweed') do
+    scenery(:seaweed, 'seaweed') do
     end
   end
   
@@ -95,7 +104,7 @@ Node.root do
   
   room(:station_charlie) do
     self.exit_north = :food_farm
-    self.direction  = :station_delta
+    self.destination = :station_delta
     self.desc = <<-DESC
       I am standing on a metallic platform in a large dome. A brightly lit
       sign above the walkway says TRAVEL-TUBE STATION CHARLIE. A walkway
@@ -115,19 +124,19 @@ Node.root do
         get_root.move(:tube_car, parent, false)
       SCRIPT
     end
-    item(:rail_tracks, 'rail-tracks', 'tracks') do
+    item(:rail_tracks, 'tracks', 'rail-tracks') do
       self.desc = "OUCH! Your hair stands on end!"
       self.presence = "Rail-tracks"
     end
   end
   
+  # The carriage
   room(:carriage) do
     self.desc = <<-DESC 
       I'm in the Travel-Tube car. A metallic voice from the
       loudspeaker-"CLUNK-CLICK OR YOU'RE SURE TO BE SICK"
     DESC
     self.short_desc = <<-DESC
-      Travel-tube car.
       A metallic voice from the loudspeaker-"CLUNK-CLICK OR YOU'RE
       SURE TO BE SICK"
     DESC
@@ -140,10 +149,66 @@ Node.root do
         puts "You are still fastened in."
       end
     SCRIPT
+    
+    item(:seatbelt, 'belt', 'seatbelt') do
+      self.fixed = true
+      self.short_desc = 'seat belt.'
+      self.presence = "seat belt."
+      self.script_fastern = <<-SCRIPT
+        puts "OK"
+        self.get_room.open = false
+      SCRIPT
+      self.script_unfastern = <<-SCRIPT
+        puts "OK"
+        self.get_room.open = true
+      SCRIPT
+    end
+    item(:smallslot, 'slot', 'small') do
+      self.fixed = true
+      self.short_desc = "small slot."
+      self.presence = "small slot"
+    end
   end
   
+  # Around Station Delta
+  room(:station_delta) do
+    self.exit_north = :observation_dome
+    self.destination = :station_echo
+    self.desc = <<-DESC
+      I am on a platform at STATION DELTA. The platform
+      opens out to the NORTH.
+    DESC
+    self.short_desc = "Station Delta"
+  end
+  room(:observation_dome) do
+    self.exit_south = :station_delta
+    self.desc = <<-DESC
+      This is the OBSERVATION DOME. The exit is to the SOUTH.
+      DESC
+    self.short_desc = "Observation dome."
+    item(:huge_window, 'window') do
+      self.fixed = true
+      self.desc = <<-DESC
+        The murky sea stretches out before me. In on direction I see a
+        SMALL MISSILE BAY and in the other- some sort of POLE sticking
+        out of some WRECKAGE.
+        DESC
+      self.presence = "Huge viewing window"
+    end
+  end
+  
+  # Around Station Echo
+  room(:station_echo) do
+  end
+  
+  # Blank room for moving items rather than root
   room(:void) do
-    self.desc = "You are in the void - how did you get here"
+    self.desc = "You are in the void - how did you get here?"
+    self.short_desc = "The Void"
+    item(:mover, 'mover', 'metallic') do
+      self.presence = "The mover is here."
+    end
+    
     item(:tube_car, 'car') do
       self.presence = "Travel-Tube car"
       self.script_enter = <<-SCRIPT
@@ -151,8 +216,50 @@ Node.root do
         return false
       SCRIPT
     end
-    item(:mover, 'mover', 'metallic') do
-      self.presence = "The mover is here."
+    scenery(:pockets, 'pocket') do
+      self.script_examine = <<-SCRIPT
+        if self.children.nil?
+          return false
+        else
+          puts "You look through the pockets and see a card!"
+          self.open = true
+          get_root.find(:dead_body).presence = 
+            "Dead body - with pockets hanging out"
+          get_root.move(:plastic_card, parent)
+          return false
+        end
+      SCRIPT
+      item(:plastic_card, 'card', 'plastic') do
+        self.desc = <<-DESC
+          TRAVEL PERMIT issues to and for use of secret agent -
+          SIGNED -"MAJOR I.RON.FOIL"
+        DESC
+        self.short_desc = "Plastic card"
+        self.presence = "Plastic card"
+        self.script_use = <<-SCRIPT
+          puts "Script called"
+          if args[0].nil?
+            puts "Args nil"
+            return false
+          elsif args[0].tag != :smallslot
+            puts "args not small slot"
+            return false
+          elsif get_room.open
+            puts get_room.short_desc
+            return false
+          else
+            puts "SHHHHH...sliding doors close."
+            puts "The car hurtles along the tunnel at high speed"
+            puts " and then jolts to a halt"
+            puts "POING! Card pops out."
+            
+            dest = get_root.find(:tube_car).get_room.destination
+            get_root.move(:tube_car, dest, false)
+            
+            return false
+          end
+        SCRIPT
+      end
     end
   end
 end
