@@ -146,7 +146,7 @@ Node.root do
         get_root.move(:player, current_station, false)
         puts current_station.short_desc
       else
-        puts "You are still fastened in."
+        puts "Still belted up!"
       end
     SCRIPT
     
@@ -199,7 +199,73 @@ Node.root do
   
   # Around Station Echo
   room(:station_echo) do
+    self.exit_north = :missile_room
+    self.destination = :station_foxtrot
+    self.desc = <<-DESC
+      I am on a platform at STATION ECHO. There is a compartment to the NORTH.
+    DESC
+    self.short_desc = "Station Echo."
   end
+  
+  room(:missile_room) do
+    self.exit_south = :station_echo
+    self.desc = <<-DESC
+        I am in the TIGER-FISH MISSILE ROOM. Exit is SOUTH.
+    DESC
+    item(:small_missile, 'missile', 'small') do
+      self.fixed = true
+      self.desc = <<-DESC
+        Not to be confused with the HUGE NUCLEAR MISSILE you've got to stop!
+        DESC
+      self.presence = "Small Tiger-Fish missile"
+    end
+    item(:display_screen, 'screen') do
+      self.fixed = true
+      self.desc = <<-DESC
+        To aim missile enter 1. Degrees Bearing. 2. Elevation. 
+        Enter bearing figures now:
+      DESC
+      self.presence = "Display screen"
+      #TODO needs to respond to READ
+    end
+    item(:keyboard, 'keyboard', 'small') do
+      self.fixed = true
+      self.presence = "Small keyboard"
+    end
+  end
+  # Around Foxtrot Station & Alpha
+  room(:station_foxtrot) do
+    self.destination = :station_alpha
+    self.desc = <<-DESC
+      I am on a platform at STATION "FOXTROT"
+    DESC
+    self.short_desc = "Station Foxtrot"
+    item(:screwdriver, 'screwdriver') do
+      self.short_desc = "Screwdriver"
+      self.presence = "Screwdriver"
+    end
+  end
+  
+  room(:station_alpha) do
+    self.destination = :station_beta
+    self.desc = <<-DESC
+      I am on a platform at STATION "ALPHA"
+    DESC
+    self.short_desc = "Station Alpha"
+    item(:torch, 'torch') do
+      self.desc = <<-DESC
+        Well every adventure's GOT to have one of these hasn't it?
+      DESC
+      self.short_desc = "Torch"
+      self.presence = "Torch"
+    end
+  end
+  
+  # Station BETA
+  room(:station_beta) do
+    self.destination = :station_charlie
+  end
+
   
   # Blank room for moving items rather than root
   room(:void) do
@@ -243,6 +309,7 @@ Node.root do
             return false
           elsif args[0].tag != :smallslot
             puts "args not small slot"
+            
             return false
           elsif get_room.open
             puts get_room.short_desc
