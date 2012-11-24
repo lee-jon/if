@@ -98,7 +98,7 @@ class Node < OpenStruct
     i.words = words
     i.instance_eval(&block) if block_given?
   end
-  
+
   # Public: *Scenery* constructor
   #
   # used for item behaviour without item properties
@@ -125,8 +125,8 @@ class Node < OpenStruct
   # Public: Traverses the tree until a room is found.
   #
   # This is useful because not all parents of items / player are rooms.
-  # For example an item can be within an item. 
-  # 
+  # For example an item can be within an item.
+  #
   # Returns: the room node on the called object.
   def get_room
     if parent.tag == :root
@@ -179,16 +179,18 @@ class Node < OpenStruct
     elsif respond_to?(:short_desc)
       short_desc
     else
-      "I see nothing special."
+      "I see nothing special"
     end
 
     if open && !children.empty?
+      base += "<br>"
       if parent.tag != :root
         # If its not a room add this text, when it has child nodes
-        base << "Inside it you see:"
+        base << "Inside it you see:" + "<br>"
       end
       children.each do |c|
         base << (c.presence || '')
+        base += "<br>" unless c.presence.nil?
       end
     end
 
@@ -220,7 +222,7 @@ class Node < OpenStruct
 
   # Public: This looks at the node to see whether there is a script
   #
-  # Returns: 
+  # Returns:
   # if true  - calls the script
   # if false - returns true
   def script(key, *args)
@@ -237,9 +239,9 @@ class Node < OpenStruct
   # Inputs:
   # thing - Node to be moved
   # to    - target parent Node
-  # check - when false the method skips validating hidden items or whether a 
+  # check - when false the method skips validating hidden items or whether a
   # node is open.
-  # 
+  #
   # Method calls find to get the object and destination nodes. If the
   # destination is hidden, or doesn't respond to 'self.open == true'
   # then the method replies it can't do that. Otherwise the object's parent
@@ -413,6 +415,9 @@ class String
     # line with that string and a newline.  This works
     # because regular expression engines are greedy,
     # they'll take as many characters as they can.
-    gsub(%r[(.{1,#{width}})(?:\s|\z)], "\\1\n")
+    gsub(%r[(.{1,#{width}})(?:\s|\z)], "\\1\n").
+
+    # Now add some paragraphs
+    gsub(/<br>/, "\n")
   end
 end

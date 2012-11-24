@@ -152,8 +152,8 @@ Node.root do
 
     item(:seatbelt, 'belt', 'seatbelt') do
       self.fixed = true
-      self.short_desc = 'seat belt.'
-      self.presence = "seat belt."
+      self.short_desc = 'Seat belt.'
+      self.presence = "Seat belt."
       self.script_fastern = <<-SCRIPT
         puts "OK"
         self.get_room.open = false
@@ -166,7 +166,7 @@ Node.root do
     item(:smallslot, 'slot', 'small') do
       self.fixed = true
       self.short_desc = "small slot."
-      self.presence = "small slot"
+      self.presence = "Small Slot"
     end
   end
 
@@ -311,11 +311,11 @@ Node.root do
     self.short_desc = "Diving Storeroom"
 
     item(:cupboard, 'cupboard') do
-      openable = true
-      fixed = true
+      self.openable = true
+      self.fixed = true
       self.presence = "Cupboard"
 
-      item(:diving_suit, 'diving suit') do
+      item(:diving_suit, 'suit') do
         self.desc = "There's a HOSE fitted."
         self.presence = "Diving suit"
         #TODO - when you wear suit it checks for air and says
@@ -327,13 +327,15 @@ Node.root do
   room(:corridor2) do
     self.exit_west = :corridor1
     self.exit_east = :corridor3
-    self.exit_south = :lift2
+    self.exit_south = :lift2a
     self.desc = <<-DESC
       The CURVING EAST/WEST CORRIDOR continues here.
       There is a simly lit ALCOVE to the SOUTH.
     DESC
+    self.short_desc = "Corridor"
     item(:sign_missile, 'sign') do
       self.fixed = true
+      self.presence = "A sign"
       self.desc = <<-DESC
         In case of ELEVATOR breakdown contact MISS.
         ISLES on "199"
@@ -341,7 +343,7 @@ Node.root do
     end
   end
 
-  room(:lift2) do
+  room(:lift2a) do
     self.exit_north = :corridor2
     self.desc = <<-DESC
       Sea-Base Lift Number >2<. The EXIT is to the NORTH.
@@ -383,6 +385,45 @@ Node.root do
     end
   end
 
+  room(:corridor4) do
+    self.exit_west = :corridor3
+    self.exit_east = :corridor1
+    self.exit_south = :lift1a
+    self.desc = <<-DESC
+      East/West curving corridor. There is a dimly lit alcove to the south.
+    DESC
+
+    item(:chute, 'chute') do
+      self.fixed = true
+      self.presence = "Large metal chute (sloping UP)"
+      self.desc = "Nasty smell of rubbish"
+      self.script_enter = <<-SCRIPT
+        puts "You slide back down. Its too steep"
+      SCRIPT
+    end
+  end
+
+  room(:lift1a) do
+    self.script_enter = <<-SCRIPT
+      puts "A light comes on...<br>"
+      return true
+      SCRIPT
+    self.exit_north = :corridor4
+    self.desc = <<-DESC
+      Sea-Base Lift Number >1<. The EXIT is to the NORTH.
+    DESC
+    self.short_desc = "Lift 1"
+    item(:row_of_buttons, 'buttons') do
+      self.fixed = true
+      self.presence = "Row of buttons"
+      self.script_push = <<-SCRIPT
+        if args[0].nil?
+          puts "Which one... UP or DOWN?"
+        end
+      SCRIPT
+    end
+  end
+
   # Blank room for moving items rather than root
   room(:void) do
     self.desc = "You are in the void - how did you get here?"
@@ -419,12 +460,12 @@ Node.root do
         self.short_desc = "Plastic card"
         self.presence = "Plastic card"
         self.script_use = <<-SCRIPT
-          puts "Script called"
+          #TODO This isn't canonical to the game.
           if args[0].nil?
-            puts "Args nil"
+            puts "Insert card where?"
             return false
           elsif args[0].tag != :smallslot
-            puts "args not small slot"
+            puts "You can't insert that there."
 
             return false
           elsif get_room.open
