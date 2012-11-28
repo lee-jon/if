@@ -17,10 +17,6 @@ tmp
 _yardoc
 doc/
 
-# test Data files
-world.rb
-*.game
-
 # Save files
 *.yaml
 
@@ -28,3 +24,6 @@ world.rb
 *.swp
 tags
 
+
+# Games files
+games/*
