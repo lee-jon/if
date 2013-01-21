@@ -51,9 +51,7 @@ class Player < Node
       do_go(dir)
     end
 
-    define_method("do_#{dir[0]}") do
-      do_go(dir)
-    end
+    alias_method :"do_#{dir[0]}", :"do_#{dir}"
   end
 
   def do_take(*thing)
