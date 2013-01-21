@@ -1,12 +1,12 @@
 # Player class
 
-# Player is an extension of the player node type, giving player specific 
+# Player is an extension of the player node type, giving player specific
 # methods which respond to the input verbs in the game.
 # This class should contain only canonical verbs. Game specific terms
-# can be included the game file which is evaluated at run time. 
+# can be included the game file which is evaluated at run time.
 
 class Player < Node
-  
+
   # Public: command separates the arguments into a verb and words
   # Returns: sends associated arguments to verb methods
   def command(words)
@@ -51,23 +51,21 @@ class Player < Node
       do_go(dir)
     end
 
-    define_method("do_#{dir[0]}") do
-      do_go(dir)
-    end
+    alias_method :"do_#{dir[0]}", :"do_#{dir}"
   end
 
   def do_take(*thing)
     thing = get_room.find(thing)
-    
+
     return if thing.nil?
-    
+
     if thing.fixed == true
       puts "This cannot be taken."
       return
     end
 
-    if thing.script('take')
-      puts 'Taken.' if get_root.move(thing, self)
+    if thing.script('take') && get_root.move(thing, self)
+      puts 'Taken.'
     end
   end
   alias_method :do_get, :do_take
@@ -120,12 +118,12 @@ class Player < Node
   def do_inventory(*a)
     puts "You are carrying:"
 
-    if children.empty?
-      puts " * Nothing"
-    else
+    unless children.empty?
       children.each do|c|
         puts " * #{c.short_description} (#{c.words.join(' ')})"
       end
+    else
+      puts " * Nothing"
     end
   end
   alias_method :do_inv, :do_inventory
@@ -175,40 +173,39 @@ class Player < Node
   end
   alias_method :do_sign, :do_use
   alias_method :do_insert, :do_use
-  
+
   def do_pull(*words)
     item = get_room.find(words)
     return if item.nil?
-    
+
     item.script('pull')
   end
-  
+
   def do_push(*words)
     item = get_room.find(words)
     return if item.nil?
-    
+
     item.script('push')
   end
-  
+
   def do_enter(*words)
     item = get_room.find(words)
     return if item.nil?
-    
+
     if item.script('enter')
       puts "Its not possible to do that."
     end
   end
-  
+
   def do_exit(*word)
     # Note unlike enter, exit uses get_root for the item, and the room for
     # the script.
     item = get_root.find(word)
     return if item.nil?
-    
+
     room = self.parent
     parent.script('exit')
   end
-    
 
   def do_debug(*a)
     STDOUT.puts get_root

@@ -38,7 +38,7 @@ class Node < OpenStruct
   end
 
   def self.save(node, file='save.yaml')
-  File.open(file, 'w+') do |f|
+    File.open(file, 'w+') do |f|
       f.puts node.to_yaml
     end
   end
@@ -129,30 +129,22 @@ class Node < OpenStruct
   #
   # Returns: the room node on the called object.
   def get_room
-    if parent.tag == :root
-      return self
-    else
-      return parent.get_room
-    end
+    return self if parent.tag == :root
+    parent.get_room
   end
 
   # Public: Traverses the tree upwards until the root node is found
   def get_root
-    if tag == :root || parent.nil?
-      return self
-    else
-      return parent.get_root
-    end
+    return self if tag == :root || parent.nil?
+    parent.get_root
   end
 
   # Public:
   def ancestors(list=[])
-    if parent.nil?
-      return list
-    else
-      list << parent
-      return parent.ancestors(list)
-    end
+    return list if parent.nil?
+
+    list << parent
+    parent.ancestors(list)
   end
 
   # Public: Helper, will return false if described == false or the
@@ -172,25 +164,25 @@ class Node < OpenStruct
   # Returns description or short description if described? is true.
   # Returns presence description of children if the node is open.
   def describe
-    base = ""
-    base += if !described? && respond_to?(:desc)
-      self.described = true
-      desc
-    elsif respond_to?(:short_desc)
-      short_desc
-    else
-      "I see nothing special"
-    end
+    base = if !described? && respond_to?(:desc)
+        self.described = true
+        desc.to_s
+      elsif respond_to?(:short_desc)
+        short_desc.to_s
+      else
+        "I see nothing special"
+      end
 
     if open && !children.empty?
-      base += "<br>"
-      if parent.tag != :root
+      base << "<br>"
+
+      unless parent.tag == :root
         # If its not a room add this text, when it has child nodes
         base << "Inside it you see:" + "<br>"
       end
+
       children.each do |c|
-        base << (c.presence || '')
-        base += "<br>" unless c.presence.nil?
+        base << "#{c.presence}<br>" if c.presence
       end
     end
 
@@ -211,13 +203,9 @@ class Node < OpenStruct
 
   # Public: returns true if the node is hidden (a child in a closed node).
   def hidden?
-    if parent.tag == :root
-      return false
-    elsif parent.open == false
-      return true
-    else
-      return parent.hidden?
-    end
+    return false if parent.tag == :root
+    return true  if parent.open == false
+    parent.hidden?
   end
 
   # Public: This looks at the node to see whether there is a script
@@ -226,11 +214,9 @@ class Node < OpenStruct
   # if true  - calls the script
   # if false - returns true
   def script(key, *args)
-    if respond_to?("script_#{key}")
-      return eval(self.send("script_#{key}"))
-    else
-      return true
-    end
+    return true unless respond_to?("script_#{key}")
+
+    eval(self.public_send("script_#{key}"))
   end
 
   # Public: Moves the position of a Node in the tree from a parent to another
@@ -350,7 +336,7 @@ class Node < OpenStruct
       c.find_by_name(words, nodes)
     end
 
-    return nodes
+    nodes
   end
 
   # Public: Overrides OpenStruct to_s method to visualise the node.
