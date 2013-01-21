@@ -336,7 +336,7 @@ class Node < OpenStruct
       c.find_by_name(words, nodes)
     end
 
-    return nodes
+    nodes
   end
 
   # Public: Overrides OpenStruct to_s method to visualise the node.
