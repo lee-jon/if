@@ -64,8 +64,8 @@ class Player < Node
       return
     end
 
-    if thing.script('take')
-      puts 'Taken.' if get_root.move(thing, self)
+    if thing.script('take') && get_root.move(thing, self)
+      puts 'Taken.'
     end
   end
   alias_method :do_get, :do_take
