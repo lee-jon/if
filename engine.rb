@@ -129,30 +129,22 @@ class Node < OpenStruct
   #
   # Returns: the room node on the called object.
   def get_room
-    if parent.tag == :root
-      return self
-    else
-      return parent.get_room
-    end
+    return self if parent.tag == :root
+    parent.get_room
   end
 
   # Public: Traverses the tree upwards until the root node is found
   def get_root
-    if tag == :root || parent.nil?
-      return self
-    else
-      return parent.get_root
-    end
+    return self if tag == :root || parent.nil?
+    parent.get_root
   end
 
   # Public:
   def ancestors(list=[])
-    if parent.nil?
-      return list
-    else
-      list << parent
-      return parent.ancestors(list)
-    end
+    return list if parent.nil?
+
+    list << parent
+    parent.ancestors(list)
   end
 
   # Public: Helper, will return false if described == false or the
@@ -211,13 +203,9 @@ class Node < OpenStruct
 
   # Public: returns true if the node is hidden (a child in a closed node).
   def hidden?
-    if parent.tag == :root
-      return false
-    elsif parent.open == false
-      return true
-    else
-      return parent.hidden?
-    end
+    return false if parent.tag == :root
+    return true  if parent.open == false
+    parent.hidden?
   end
 
   # Public: This looks at the node to see whether there is a script
@@ -226,11 +214,9 @@ class Node < OpenStruct
   # if true  - calls the script
   # if false - returns true
   def script(key, *args)
-    if respond_to?("script_#{key}")
-      return eval(self.send("script_#{key}"))
-    else
-      return true
-    end
+    return true unless respond_to?("script_#{key}")
+
+    eval(self.public_send("script_#{key}"))
   end
 
   # Public: Moves the position of a Node in the tree from a parent to another
