@@ -118,12 +118,12 @@ class Player < Node
   def do_inventory(*a)
     puts "You are carrying:"
 
-    if children.empty?
-      puts " * Nothing"
-    else
+    unless children.empty?
       children.each do|c|
         puts " * #{c.short_description} (#{c.words.join(' ')})"
       end
+    else
+      puts " * Nothing"
     end
   end
   alias_method :do_inv, :do_inventory
