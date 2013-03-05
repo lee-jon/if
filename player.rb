@@ -1,7 +1,7 @@
 # Player class
 
-# Player is an extension of the player node type, giving player specific
-# methods which respond to the input verbs in the game.
+# Player is an extension of the player node type, giving player 
+# specific methods which respond to the input verbs in the game.
 # This class should contain only canonical verbs. Game specific terms
 # can be included the game file which is evaluated at run time.
 
@@ -114,6 +114,17 @@ class Player < Node
     end
   end
   alias_method :do_ex, :do_examine
+
+  def do_read(*thing)
+    item = get_room.find(thing)
+    return if item.nil?
+
+    if item.script('read')
+      item.read
+    else
+      put "You cannot read that"
+    end
+  end
 
   def do_inventory(*a)
     puts "You are carrying:"

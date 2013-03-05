@@ -6,7 +6,10 @@ require 'readline'
 $: << '.'
 require 'engine'
 require 'player'
-require 'grapher'
+
+if ARGV[0] == "d"
+  require 'grapher'
+end
 
 # Start IF and select the required game
 puts "Welcome to IF, the interactive fiction / adventure game interpreter.\n\n"
