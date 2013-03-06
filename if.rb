@@ -1,14 +1,21 @@
 #!/usr/bin/env ruby
+
+# IF
+#
+# The interactive fiction game engine
+
 require 'yaml'
 require 'readline'
 
-# Fix loadpath and load Requirements
+# Fix loadpath and require IF files
 $: << '.'
 require 'engine'
 require 'player'
 
+# Load files if developer mode is selected
 if ARGV[0] == "d"
   require 'grapher'
+  require 'debug-if'
 end
 
 # Start IF and select the required game
@@ -35,7 +42,10 @@ Readline.completion_proc = comp
 print "\e[2J\e[f\n\n"
 puts game.intro.to_s + "\n\n"
 
-# Play game loop
+# Main game loop
+#
+# Master verbs of load, save, help and quit are coded here in the loop
+# If the command isn't one of these the loop asks the Player class. 
 loop do
   player = game.find(:player)
   player.get_room.describe unless player.get_room.described?

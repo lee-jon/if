@@ -218,7 +218,4 @@ class Player < Node
     parent.script('exit')
   end
 
-  def do_debug(*a)
-    STDOUT.puts get_root
-  end
 end

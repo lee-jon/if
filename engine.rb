@@ -139,7 +139,7 @@ class Node < OpenStruct
     parent.get_root
   end
 
-  # Public:
+  # Public: Lists the ancestors of a node. 
   def ancestors(list=[])
     return list if parent.nil?
 
