@@ -165,11 +165,14 @@ class Node < OpenStruct
   # Returns presence description of children if the node is open.
   def describe
     base = ""
+
     if !described? && respond_to?(:desc)
       self.described = true
       base << desc.to_s
-    elsif respond_to?(:short_desc)
+    elsif described? && respond_to?(:short_desc)
       base << short_desc.to_s
+    elsif described? && !respond_to?(:short_desc)
+      base << desc.to_s
     else
       base << "I see nothing special"
     end
