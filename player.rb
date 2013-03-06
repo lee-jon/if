@@ -120,9 +120,7 @@ class Player < Node
     return if item.nil?
 
     if item.script('read')
-      item.read
-    else
-      put "You cannot read that"
+      puts "You cannot read that"
     end
   end
 
@@ -217,5 +215,6 @@ class Player < Node
     room = self.parent
     parent.script('exit')
   end
+  alias_method :do_leave, :do_exit
 
 end

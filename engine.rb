@@ -6,7 +6,7 @@ require "ostruct"
 # A node which describes the data tree behaviour, and all methods
 # to be called on a data node. Node inherits from (OpenStruct)[http://www.ruby-doc.org/stdlib-1.9.3/libdoc/ostruct/rdoc/OpenStruct.html]
 # which is part of Ruby standard library. OpenStruct is like a Struct
-# where you can also arbitrarily define attributes at runtime.ß
+# where you can also arbitrarily define attributes at runtime.
 #
 # Although any type of node is valid, the default types of root, room,
 # item and player have their own constructors. These have their own
@@ -139,7 +139,7 @@ class Node < OpenStruct
     parent.get_root
   end
 
-  # Public: Lists the ancestors of a node. 
+  # Public: Lists the ancestors of a node.
   def ancestors(list=[])
     return list if parent.nil?
 
@@ -209,6 +209,7 @@ class Node < OpenStruct
   end
 
   # Public: This looks at the node to see whether there is a script
+  # This returns TRUE if there IS a script. Oddly.
   #
   # Returns:
   # if true  - calls the script
