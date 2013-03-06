@@ -18,6 +18,10 @@ Run the game using:
 
     ruby if.rb
 
+Run the game in debug mode to get access to the visualisation and debug commands
+
+    ruby if.rb d
+
 ## Basics
 
 ### Data
