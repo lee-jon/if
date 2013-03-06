@@ -164,20 +164,22 @@ class Node < OpenStruct
   # Returns description or short description if described? is true.
   # Returns presence description of children if the node is open.
   def describe
-    base = if !described? && respond_to?(:desc)
-        self.described = true
-        desc.to_s
-      elsif respond_to?(:short_desc)
-        short_desc.to_s
-      else
-        "I see nothing special"
-      end
+    base = ""
+    if !described? && respond_to?(:desc)
+      self.described = true
+      base << desc.to_s
+    elsif respond_to?(:short_desc)
+      base << short_desc.to_s
+    else
+      base << "I see nothing special"
+    end
 
     if open && !children.empty?
-      base << "<br>"
+      base << "<br> "
 
-      unless parent.tag == :root
-        # If its not a room add this text, when it has child nodes
+      if parent.tag == :root
+        base << "You also see:" + "<br>"
+      else
         base << "Inside it you see:" + "<br>"
       end
 
