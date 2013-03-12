@@ -172,7 +172,13 @@ class Player < Node
     
     prep_regex = Regexp.new("(#{prepositions.join('|')})")
     item_words, _, cont_words = words.join(' ').split(prep_regex)
+        
+    item = get_room.find(item_words)
+    return if item.nil?
     
+    if item.script('climb')
+      puts "You cannot climb on that"
+    end
     
   end
 
