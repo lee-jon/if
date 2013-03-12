@@ -344,40 +344,6 @@ class Node < OpenStruct
 
     nodes
   end
-
-  # Public: Overrides OpenStruct to_s method to visualise the node.
-  def to_s(verbose=false, indent='')
-    bullet = if parent && parent.tag == :root
-               '#'
-             elsif tag == :player
-               '@'
-             elsif tag == :root
-               '>'
-             elsif open == true
-               'O'
-             else
-               '*'
-             end
-
-    str = "#{indent}#{bullet} #{tag}\n"
-    if verbose
-      self.table.each do|k,v|
-        if k == :children
-          str << "#{indent+'  '}#{k}=#{v.map(&:tag)}\n"
-        elsif v.is_a?(Node)
-          str << "#{indent+'  '}#{k}=#{v.tag}\n"
-        else
-          str << "#{indent+'  '}#{k}=#{v}\n"
-        end
-      end
-    end
-
-    children.each do|c|
-      str << c.to_s(verbose, indent + '  ')
-    end
-
-    return str
-  end
 end
 
 # Public: adds word_wrap method to String for better screen formatting.
