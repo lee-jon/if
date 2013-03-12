@@ -33,12 +33,18 @@ file = File.read(file_index[file_number])
 game = eval(file)
 
 # Initialize game
+if game.prompt.nil?
+  game.prompt = ""
+end
+PROMPT = "\n"+ game.prompt + "> "
+
 AUTOCOMPLETE = Player.game_methods
 comp = proc { |s| AUTOCOMPLETE.grep( /^#{Regexp.escape(s)}/ ) }
 Readline.completion_append_character = " "
 Readline.completion_proc = comp
 
-# Start game
+# Clear the screen and print the game's intro.
+#
 print "\e[2J\e[f\n\n"
 puts game.intro.to_s + "\n\n"
 
@@ -50,7 +56,7 @@ loop do
   player = game.find(:player)
   player.get_room.describe unless player.get_room.described?
 
-  input = Readline.readline("\n> ", true)
+  input = Readline.readline(PROMPT, true)
   verb = input.split(' ').first
 
   case verb
