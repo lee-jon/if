@@ -1,5 +1,4 @@
 # Player class
-
 # Player is an extension of the player node type, giving player 
 # specific methods which respond to the input verbs in the game.
 # This class should contain only canonical verbs. Game specific terms
@@ -12,8 +11,16 @@ class Player < Node
   def command(words)
     verb, *words = words.split(' ')
     verb = "do_#{verb}"
+    
+    if $debugmode == true
+      puts "Requesting command #{verb} for words #{words} from player."
+    end
 
     if respond_to?(verb)
+      if $debugmode == true
+        puts "Player responding to method call sending #{words}"
+      end
+
       send(verb, *words)
     else
       puts "I don't know how to do that"
@@ -139,6 +146,7 @@ class Player < Node
   alias_method :do_i, :do_inventory
 
   def do_put(*words)
+    puts "recieved #{words}"
     prepositions = [' in ', ' on ']
 
     prep_regex = Regexp.new("(#{prepositions.join('|')})")
@@ -159,8 +167,17 @@ class Player < Node
     end
   end
 
+  def do_climb(*words)
+    prepositions = [' in ', ' on ']
+    
+    prep_regex = Regexp.new("(#{prepositions.join('|')})")
+    item_words, _, cont_words = words.join(' ').split(prep_regex)
+    
+    
+  end
+
   def do_use(*words)
-    prepositions = %w{ in on with }
+    prepositions = %w{ in on with the }
     prepositions.map!{|p| " #{p} " }
 
     prep_regex = Regexp.new("(#{prepositions.join('|')})")

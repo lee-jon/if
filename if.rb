@@ -14,6 +14,7 @@ require 'player'
 
 # Load files if developer mode is selected
 # if ARGV[0] == "d"
+  $debugmode = true
   require 'grapher'
   require 'debug-if'
 # end
