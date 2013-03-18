@@ -13,11 +13,13 @@ require 'engine'
 require 'player'
 
 # Load files if developer mode is selected
-# if ARGV[0] == "d"
+if ARGV[0] == "d"
   $debugmode = true
   require 'grapher'
   require 'debug-if'
-# end
+end
+
+ARGV.clear
 
 # Start IF and select the required game
 puts "Welcome to IF, the interactive fiction / adventure game interpreter.\n\n"
