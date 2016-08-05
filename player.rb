@@ -1,5 +1,5 @@
 # Player class
-# Player is an extension of the player node type, giving player 
+# Player is an extension of the player node type, giving player
 # specific methods which respond to the input verbs in the game.
 # This class should contain only canonical verbs. Game specific terms
 # can be included the game file which is evaluated at run time.
@@ -11,7 +11,7 @@ class Player < Node
   def command(words)
     verb, *words = words.split(' ')
     verb = "do_#{verb}"
-    
+
     if $debugmode == true
       puts "Requesting command #{verb} for words #{words} from player."
     end
@@ -78,6 +78,14 @@ class Player < Node
   alias_method :do_get, :do_take
 
   def do_drop(*thing)
+    thing = get_room.find(thing)
+    return if thing.nil?
+
+    if thing.fixed
+      puts "You can't drop that."
+      return
+    end
+
     puts 'Dropped.' if move(thing, get_room)
   end
 
@@ -89,6 +97,7 @@ class Player < Node
       if container.open == state
         puts "It's already #{state ? 'open' : 'closed'}"
       else
+        puts "OK."
         container.open = state
       end
     else
@@ -98,6 +107,9 @@ class Player < Node
 
   def do_open(*thing)
     open_close(thing, true)
+    item = get_room.find(thing)
+
+    item.script('open')
   end
 
   def do_close(*thing)
@@ -169,17 +181,17 @@ class Player < Node
 
   def do_climb(*words)
     prepositions = [' in ', ' on ']
-    
+
     prep_regex = Regexp.new("(#{prepositions.join('|')})")
     item_words, _, cont_words = words.join(' ').split(prep_regex)
-        
+
     item = get_room.find(item_words)
     return if item.nil?
-    
+
     if item.script('climb')
       puts "You cannot climb on that"
     end
-    
+
   end
 
   def do_use(*words)

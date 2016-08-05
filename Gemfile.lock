@@ -1,0 +1,13 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    graph (2.8.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  graph (= 2.8.0)
+
+BUNDLED WITH
+   1.10.6
