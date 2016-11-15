@@ -106,10 +106,11 @@ class Player < Node
   end
 
   def do_open(*thing)
-    open_close(thing, true)
-    item = get_room.find(thing)
+    if open_close(thing, true)
+      item = get_room.find(thing)
 
-    item.script('open')
+      item.script('open')
+    end
   end
 
   def do_close(*thing)

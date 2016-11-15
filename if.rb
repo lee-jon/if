@@ -17,6 +17,7 @@ if ARGV[0] == "d"
   $debugmode = true
   require 'grapher'
   require 'debug-if'
+  require "pry"
 end
 
 ARGV.clear
