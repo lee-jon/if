@@ -1,6 +1,6 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
-ruby '2.2.2'
+ruby '2.7.3'
 
-  gem 'graph', '2.8.0'
-  gem 'pry'
+gem 'graph'
+gem 'pry'
